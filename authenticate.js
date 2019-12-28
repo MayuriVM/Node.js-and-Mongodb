@@ -7,6 +7,7 @@ var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 var config = require('./config.js');
 
+
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -37,3 +38,16 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
     }));
 
 exports.verifyUser = passport.authenticate('jwt', {session: false});
+
+
+exports.verifyAdmin = function (req, res, next){
+    console.log("Got the user trying with Req.user" + req.user.admin)
+    if(req.user.admin){
+        next();
+    }
+    else{
+        var err = new Error('You are not authorized!');
+        err.status = 403;
+        return next(err);
+    }
+};
